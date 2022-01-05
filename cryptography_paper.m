@@ -1,7 +1,6 @@
 image1 = imread("8.gif");
 imsize = size(image1);
 image2 = imresize(image1, [512 512]);
-image2 = double(image2);
 rows = [1:512];
 columns = [1:512];
 
@@ -125,6 +124,7 @@ Y1 = mod(X1,256);
 Y2 = mod(X2,256);
 Y3 = mod(X3,256);
 
+image3 = double(image3);
 Z1 = Y1*image3;
 Z2 = Y2*image3;
 Z3 = Y3*image3;
@@ -158,9 +158,9 @@ a = 1;
 b = 2;
 c = 3;
 d = a-c;
-q1 = 0.5;
-q2 = 0.3;
-q3 = 0.4;
+q1 = 0.997;
+q2 = 0.1666;
+q3 = 0.4765;
 
 % Binomial coefficients calculation:
 cp1=1; cp2=1; cp3=1;
@@ -205,5 +205,6 @@ Z3_encrypt = transpose(mod(Z3_encrypt,256));
 % Choose random direction, say Z2 
 
 Z2_reshaped = reshape(Z2_encrypt,512,512);
-image3(1:512,1:512,:) = Z2_reshaped;
-imshow(image3)
+image3(1:512,1:512,1) = Z2_reshaped;
+
+imshow(uint8(image3))
