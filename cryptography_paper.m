@@ -84,6 +84,7 @@ r0=[x(1) y(1) z(1)];
 rf=[x(end) y(end) z(end)];
 t = rf-r0;
 for i = 2:1536256
+    disp(i);
     x=cumsum(randn(1,N));
     y=cumsum(randn(1,N));
     z=cumsum(randn(1,N));
@@ -115,18 +116,18 @@ U3 = T3(1:end);
 W1 = reshape(U1,512,512);
 W2 = reshape(U2,512,512);
 W3 = reshape(U3,512,512);
-
-X1 = round(abs(W1))*10^14;
-X2 = round(abs(W2))*10^14;
-X3 = round(abs(W3))*10^14;
+%% Section 2
+X1 = round(abs(W1));
+X2 = round(abs(W2));
+X3 = round(abs(W3));
 
 Y1 = mod(X1,256);
 Y2 = mod(X2,256);
 Y3 = mod(X3,256);
 
-Z1 = Y1*image2;
-Z2 = Y2*image2;
-Z3 = Y3*image2;
+Z1 = Y1*image3;
+Z2 = Y2*image3;
+Z3 = Y3*image3;
 
 %%%%% 
 % Chen Chaotic System
@@ -157,9 +158,9 @@ a = 1;
 b = 2;
 c = 3;
 d = a-c;
-q1 = 1;
-q1 = 4;
-q3 = 3;
+q1 = 0.5;
+q2 = 0.3;
+q3 = 0.4;
 
 % Binomial coefficients calculation:
 cp1=1; cp2=1; cp3=1;
@@ -178,33 +179,31 @@ for i=2:512
     y(i)=(-d*x(i)-x(i)*z(i-1)+c*y(i-1))*h^q2 - memo(y, c2, i);
     z(i)=(x(i)*y(i)-b*z(i-1))*h^q3 - memo(z, c3, i);
 end
-for j=1:n
+for j=1:512
     K(j,1)=x(j);
     K(j,2)=y(j);
     K(j,3)=z(j);
 end
+T = round(abs(K));
 
 Z1_encrypt = [];
 Z2_encrypt = [];
 Z3_encrypt = [];
 for i = 1:512
     for j = 1:512
-        Z1_encrypt = [Z1_encrypt bitor(Z1(j,i),K(j,1))];
-        Z2_encrypt = [Z2_encrypt bitor(Z2(j,i),K(j,2))];
-        Z3_encrypt = [Z3_encrypt bitor(Z3(j,i),K(j,3))];
+        disp(i)
+        Z1_encrypt = [Z1_encrypt bitor(Z1(j,i),T(j,1),'uint64')];
+        Z2_encrypt = [Z2_encrypt bitor(Z2(j,i),T(j,2),'uint64')];
+        Z3_encrypt = [Z3_encrypt bitor(Z3(j,i),T(j,3),'uint64')];
     end
 end
 
-Z1_encrypt = transpose(Z1_encrypt);
-Z2_encrypt = transpose(Z2_encrypt);
-Z3_encrypt = transpose(Z3_encrypt);
+Z1_encrypt = transpose(mod(Z1_encrypt,256));
+Z2_encrypt = transpose(mod(Z2_encrypt,256));
+Z3_encrypt = transpose(mod(Z3_encrypt,256));
 
 % Choose random direction, say Z2 
 
 Z2_reshaped = reshape(Z2_encrypt,512,512);
-for i = 1:512
-    for j = 1:512
-    image2(i,j,:) = Z2_reshaped(i,j);
-    end
-end
-imshow(image2)
+image3(1:512,1:512,:) = Z2_reshaped;
+imshow(image3)
