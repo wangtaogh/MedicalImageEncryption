@@ -1,4 +1,4 @@
-function [T, Y]=FOChen(parameters, orders, TSim, Y0)
+function [T, K]=FOChen(parameters, orders, TSim, Y0)
 %
 % Numerical Solution of the Fractional-Order Chen's System
 %
@@ -27,7 +27,7 @@ n=round(TSim/h);
 q1=orders(1); q2=orders(2); q3=orders(3);
 % constants of Chen's system:
 a=parameters(1); b=parameters(2); 
-c=parameters(3); d=parameters(4);
+c=parameters(3); d=c-a;
 % binomial coefficients calculation:
 cp1=1; cp2=1; cp3=1;
 for j=1:n
@@ -37,17 +37,18 @@ for j=1:n
     cp1=c1(j); cp2=c2(j); cp3=c3(j);
 end
 % initial conditions setting:
-x(1)=Y0(1); y(1)=Y0(2); z(1)=Y0(3);
+x_chen(1)=Y0(1); y_chen(1)=Y0(2); z_chen(1)=Y0(3);
 % calculation of phase portraits /numerical solution/:
 for i=2:n
-    x(i)=(a*(y(i-1)-x(i-1)))*h^q1 - memo(x, c1, i);
-    y(i)=(-d*x(i)-x(i)*z(i-1)+c*y(i-1))*h^q2 - memo(y, c2, i);
-    z(i)=(x(i)*y(i)-b*z(i-1))*h^q3 - memo(z, c3, i);
+    x_chen(i)=(a*(y_chen(i-1)-x_chen(i-1)))*h^q1 - memo(x_chen, c1, i);
+    y_chen(i)=(-d*x_chen(i)-x_chen(i)*z_chen(i-1)+c*y_chen(i-1))*h^q2 - memo(y_chen, c2, i);
+    z_chen(i)=(x_chen(i)*y_chen(i)-b*z_chen(i-1))*h^q3 - memo(z_chen, c3, i);
 end
 for j=1:n
-    Y(j,1)=x(j);
-    Y(j,2)=y(j);
-    Y(j,3)=z(j);
+    K(j,1)=x_chen(j);
+    K(j,2)=y_chen(j);
+    K(j,3)=z_chen(j);
 end
 T=h:h:TSim;
 %
+
