@@ -15,7 +15,7 @@ MATLAB Implementation of the paper titled "[A Lightweight Chaos‑Based Medical 
 ```
 git clone https://github.com/divyekalra1/MedicalImageEncryption.git 
 ```
-### 2. Import the 'MedicalImageEncryption' folder into MATLAB 
+### 2. Import the 'MedicalImageEncryption' folder into MATLAB. All the images in need of encryption have to be kept in the "Images" folder.
 
 ### 3. Run the cryptography_paper.m program  
 
