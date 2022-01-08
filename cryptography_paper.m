@@ -1,5 +1,5 @@
 %% Read image and resize it to 512x512
-image1 = imread("covid_pneumonia.jpeg");
+image1 = imread("Images/covid_pneumonia.jpeg");
 image2 = imresize(image1, [512 512]);
 % Creating a copy of the resized image
 image3 = image2;
