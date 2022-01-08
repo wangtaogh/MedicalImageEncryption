@@ -126,9 +126,9 @@ X1 = round(abs(W1));
 X2 = round(abs(W2));
 X3 = round(abs(W3));
 
-Y1 = mod(X1,256);
-Y2 = mod(X2,256);
-Y3 = mod(X3,256);
+% Y1 = mod(X1,256);
+% Y2 = mod(X2,256);
+% Y3 = mod(X3,256);
 
 image3 = double(image3);
 
@@ -136,42 +136,29 @@ Z1 = Y1*image3;
 Z2 = Y2*image3;
 Z3 = Y3*image3;
 
+Z1 = mod(Z1,256);
+Z2 = mod(Z1,256);
+Z3 = mod(Z1,256);
+
 %% Chen Chaotic System
 [simulation_time, K] = FOChen([35 3 28], [0.98 0.98 0.98], 20, [8 2 1]);
 
+K(513:end,:) = [];
 T = round(abs(K));
 
-Z1_encrypt = [];
-Z2_encrypt = [];
-Z3_encrypt = [];
-for i = 1:1:512
-    disp(i)
-    for j = 1:1:512
-        Z1_encrypt = [Z1_encrypt bitor(Z1(j,i),T(j,1),'uint64')];
-        Z2_encrypt = [Z2_encrypt bitor(Z2(j,i),T(j,2),'uint64')];
-        Z3_encrypt = [Z3_encrypt bitor(Z3(j,i),T(j,3),'uint64')];
-    end
-end
-% [i,j] = meshgrid(1:512,1:512);
-% disp(i)
-% Z1_encrypt = bitor(Z1(j,i),T(j,1),'uint64');
-% Z2_encrypt = bitor(Z2(j,i),T(j,2),'uint64');
-% Z3_encrypt = bitor(Z3(j,i),T(j,3),'uint64');
-%%
-Z1_encrypt = transpose(mod(Z1_encrypt,256));
-Z2_encrypt = transpose(mod(Z2_encrypt,256));
-Z3_encrypt = transpose(mod(Z3_encrypt,256));
+Z1_encrypt = bitor(Z1,T(:,1),'uint64');
+Z2_encrypt = bitor(Z1,T(:,2),'uint64');
+Z3_encrypt = bitor(Z1,T(:,3),'uint64');
 
-% Choose random direction, say Z3
+%% Choose random direction, say Z3
 
-Z3_reshaped = reshape(Z3_encrypt,512,512);
-image3(1:512,1:512,1) = Z3_reshaped;
+image3(1:512,1:512,1) = Z3_encrypt;
 
-converted_image3 = uint8(image3);
+converted_image = uint8(image3);
 % imshow(converted_image3)
 % figure
 % imhist(converted_image3)
-J = histeq(converted_image3);
+J = histeq(converted_image);
 figure
 subplot(1,2,1)
 imshow(J)

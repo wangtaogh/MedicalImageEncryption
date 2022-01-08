@@ -1,5 +1,5 @@
 %% Read image and resize it to 512x512
-image1 = imread("covid_pneumonia.jpeg");
+image1 = imread("Images/covid_pneumonia.jpeg");
 image2 = imresize(image1, [512 512]);
 % Creating a copy of the resized image
 image3 = image2;
@@ -21,15 +21,13 @@ for i = 2:512
     x(i) = 1-a*x(i-1)^2+y(i-1);
     y(i) = b*x(i-1);
 end
-% Bug found. Temporary fix for now
-y(513:end) = [];
 
 [outX,indX] = sort(x);
 [outY,indY] = sort(y);
 for n = 1:64
     b = 1+(n-1)*8;
-    for n = 1:64
-        a = 1+(n-1)*8;
+    for m = 1:64
+        a = 1+(m-1)*8;
         for i = b:b+7
             for j=a:a+7
                 pixelIntensity(i,j) = pixelIntensity(indX(i),indY(j));
@@ -124,10 +122,6 @@ W1 = reshape(V1,512,512);
 W2 = reshape(V2,512,512);
 W3 = reshape(V3,512,512);
 
-% W1 = reshape(U1,512,512);
-% W2 = reshape(U2,512,512);
-% W3 = reshape(U3,512,512);
-
 X1 = round(abs(W1));
 X2 = round(abs(W2));
 X3 = round(abs(W3));
@@ -143,26 +137,46 @@ Z2 = Y2*image3;
 Z3 = Y3*image3;
 
 %% Chen Chaotic System
-[simulation_time, K] = FOChen([35 3 35], [0.98 0.98 0.98], 20, [8 2 1]);
+[simulation_time, K] = FOChen([35 3 28], [0.98 0.98 0.98], 20, [8 2 1]);
+% K(513:end,:) = [];
+% T = round(abs(K));
+% % Old Method
+% Z1_encrypt = [];
+% Z2_encrypt = [];
+% Z3_encrypt = [];
+% for i = 1:1:512
+%     disp(i)
+%     for j = 1:1:512
+%         Z1_encrypt = [Z1_encrypt bitor(Z1(i,j),T(i,1),'uint64')];
+%         Z2_encrypt = [Z2_encrypt bitor(Z2(i,j),T(i,2),'uint64')];
+%         Z3_encrypt = [Z3_encrypt bitor(Z3(i,j),T(i,3),'uint64')];
+%     end
+% end
 
+K(513:end,:) = [];
 T = round(abs(K));
-
+% Old Method
 Z1_encrypt = [];
 Z2_encrypt = [];
 Z3_encrypt = [];
 for i = 1:1:512
     disp(i)
     for j = 1:1:512
-        Z1_encrypt = [Z1_encrypt bitor(Z1(j,i),T(j,1),'uint64')];
-        Z2_encrypt = [Z2_encrypt bitor(Z2(j,i),T(j,2),'uint64')];
-        Z3_encrypt = [Z3_encrypt bitor(Z3(j,i),T(j,3),'uint64')];
+        Z1_encrypt = [Z1_encrypt bitor(Z1(i,j),T(i,1),'uint64')];
+        Z2_encrypt = [Z2_encrypt bitor(Z2(i,j),T(i,2),'uint64')];
+        Z3_encrypt = [Z3_encrypt bitor(Z3(i,j),T(i,3),'uint64')];
     end
 end
-% [i,j] = meshgrid(1:512,1:512);
-% disp(i)
-% Z1_encrypt = bitor(Z1(j,i),T(j,1),'uint64');
-% Z2_encrypt = bitor(Z2(j,i),T(j,2),'uint64');
-% Z3_encrypt = bitor(Z3(j,i),T(j,3),'uint64');
+
+
+Z1_encrypt = bitor(Z1,T(:,1),'uint64');
+Z2_encrypt = bitor(Z1,T(:,2),'uint64');
+Z3_encrypt = bitor(Z1,T(:,3),'uint64');
+
+
+
+
+
 %%
 Z1_encrypt = transpose(mod(Z1_encrypt,256));
 Z2_encrypt = transpose(mod(Z2_encrypt,256));
