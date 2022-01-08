@@ -122,10 +122,6 @@ W1 = reshape(V1,512,512);
 W2 = reshape(V2,512,512);
 W3 = reshape(V3,512,512);
 
-% W1 = reshape(U1,512,512);
-% W2 = reshape(U2,512,512);
-% W3 = reshape(U3,512,512);
-
 X1 = round(abs(W1));
 X2 = round(abs(W2));
 X3 = round(abs(W3));
