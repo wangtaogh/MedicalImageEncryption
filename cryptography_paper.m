@@ -137,7 +137,7 @@ Z2 = Y2*image3;
 Z3 = Y3*image3;
 
 %% Chen Chaotic System
-[simulation_time, K] = FOChen([35 3 35], [0.98 0.98 0.98], 20, [8 2 1]);
+[simulation_time, K] = FOChen([35 3 28], [0.98 0.98 0.98], 20, [8 2 1]);
 
 T = round(abs(K));
 
