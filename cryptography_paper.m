@@ -30,7 +30,6 @@ for n = 1:64
         a = 1+(m-1)*8;
         for i = b:b+7
             for j=a:a+7
-                pixelIntensity(i,j) = pixelIntensity(indX(i),indY(j));
                 image2(i,j,:) = image3(indX(i),indY(j),:);
             end
         end
