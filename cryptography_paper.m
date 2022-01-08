@@ -21,15 +21,13 @@ for i = 2:512
     x(i) = 1-a*x(i-1)^2+y(i-1);
     y(i) = b*x(i-1);
 end
-% Bug found. Temporary fix for now
-y(513:end) = [];
 
 [outX,indX] = sort(x);
 [outY,indY] = sort(y);
 for n = 1:64
     b = 1+(n-1)*8;
-    for n = 1:64
-        a = 1+(n-1)*8;
+    for m = 1:64
+        a = 1+(m-1)*8;
         for i = b:b+7
             for j=a:a+7
                 pixelIntensity(i,j) = pixelIntensity(indX(i),indY(j));
@@ -116,9 +114,17 @@ U1 = T1(1:end);
 U2 = T2(1:end);
 U3 = T3(1:end);
 
-W1 = reshape(U1,512,512);
-W2 = reshape(U2,512,512);
-W3 = reshape(U3,512,512);
+V1 = U1 * 10^14;
+V2 = U2 * 10^14;
+V3 = U3 * 10^14;
+
+W1 = reshape(V1,512,512);
+W2 = reshape(V2,512,512);
+W3 = reshape(V3,512,512);
+
+% W1 = reshape(U1,512,512);
+% W2 = reshape(U2,512,512);
+% W3 = reshape(U3,512,512);
 
 X1 = round(abs(W1));
 X2 = round(abs(W2));
@@ -129,19 +135,20 @@ Y2 = mod(X2,256);
 Y3 = mod(X3,256);
 
 image3 = double(image3);
+
 Z1 = Y1*image3;
 Z2 = Y2*image3;
 Z3 = Y3*image3;
 
 %% Chen Chaotic System
-[T, K] = FOChen([35 3 35], [0.98 0.98 0.98], 20, [8 2 1]);
+[simulation_time, K] = FOChen([35 3 35], [0.98 0.98 0.98], 20, [8 2 1]);
 
 T = round(abs(K));
 
 Z1_encrypt = [];
 Z2_encrypt = [];
 Z3_encrypt = [];
-for i = 1:512
+for i = 1:1:512
     disp(i)
     for j = 1:1:512
         Z1_encrypt = [Z1_encrypt bitor(Z1(j,i),T(j,1),'uint64')];
@@ -165,7 +172,7 @@ Z3_reshaped = reshape(Z3_encrypt,512,512);
 image3(1:512,1:512,1) = Z3_reshaped;
 
 converted_image3 = uint8(image3);
-imshow(converted_image3)
+% imshow(converted_image3)
 % figure
 % imhist(converted_image3)
 J = histeq(converted_image3);
