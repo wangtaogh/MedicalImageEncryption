@@ -1,3 +1,7 @@
+%% Start simulation
+clc;
+time_start = tic;
+
 %% Read image and resize it to 512x512
 image1 = imread("Images/covid_pneumonia.jpeg");
 image2 = imresize(image1, [512 512]);
@@ -63,14 +67,13 @@ for i = 1:1:64
 end
 
 image3 = image2;
-imshow(image3);
 
 %% Brownian Motion Implementation
 % This simulation illustrates a fast implementation of three dimensional
 % Brownian motion, the output is the Euclidean distance between initial
 % and final positions. (rf-r0)
-
 N=1000;
+t = nan( 1536256, 3 );
 x_brown=cumsum(randn(1,N));
 y_brown=cumsum(randn(1,N));
 z_brown=cumsum(randn(1,N));
@@ -78,11 +81,11 @@ z_brown=cumsum(randn(1,N));
 x_brown(1)=0;
 y_brown(1)=0;
 z_brown(1)=0;
-r0=[x_brown(1) y_brown(1) z_brown(1)];
+ r0=[x_brown(1) y_brown(1) z_brown(1)];
 % Final radius
 rf=[x_brown(end) y_brown(end) z_brown(end)];
-t = rf-r0;
-for i = 2:5:1536256
+t(1,:) = rf-r0;
+for i = 2:1:1536256
     disp(i);
     x_brown=cumsum(randn(1,N));
     y_brown=cumsum(randn(1,N));
@@ -97,8 +100,9 @@ for i = 2:5:1536256
     r0=[x_brown(1) y_brown(1) z_brown(1)];
     % Final radius
     rf=[x_brown(end) y_brown(end) z_brown(end)];
-    t = cat(1,t,rf-r0);
+    t(i,:) = rf-r0;
 end
+
 %% Modulus,absolute functions and multiply operations
 T1 = t(1:end,1);
 T2 = t(1:end,2);
@@ -107,7 +111,6 @@ T3 = t(1:end,3);
 T1(1:end-262144,:) = [];
 T2(1:end-262144,:) = [];
 T3(1:end-262144,:) = [];
-
 
 U1 = T1(1:end);
 U2 = T2(1:end);
@@ -125,9 +128,9 @@ X1 = round(abs(W1));
 X2 = round(abs(W2));
 X3 = round(abs(W3));
 
-% Y1 = mod(X1,256);
-% Y2 = mod(X2,256);
-% Y3 = mod(X3,256);
+Y1 = mod(X1,256);
+Y2 = mod(X2,256);
+Y3 = mod(X3,256);
 
 image3 = double(image3);
 
@@ -163,3 +166,8 @@ subplot(1,2,1)
 imshow(J)
 subplot(1,2,2)
 imhist(J,64)
+
+%% End simulation
+time_end = toc(time_start);
+X = sprintf('Total time : %d',time_end);
+disp(X);
