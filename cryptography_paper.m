@@ -148,9 +148,9 @@ Z3 = mod(Z1,256);
 K(513:end,:) = [];
 T = round(abs(K));
 
-Z1_encrypt = bitor(Z1,T(:,1),'uint64');
-Z2_encrypt = bitor(Z1,T(:,2),'uint64');
-Z3_encrypt = bitor(Z1,T(:,3),'uint64');
+Z1_encrypt = bitxor(Z1,T(:,1),'uint64');
+Z2_encrypt = bitxor(Z1,T(:,2),'uint64');
+Z3_encrypt = bitxor(Z1,T(:,3),'uint64');
 
 %% Choose random direction, say Z3
 
